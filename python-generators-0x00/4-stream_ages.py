@@ -1,7 +1,7 @@
 import pymysql
 
 
-def stream_users_in_ages():
+def stream_user_ages():
     # Connect to the database
     mydb = pymysql.connect(
         host="localhost",
@@ -19,7 +19,7 @@ def stream_users_in_ages():
 def calculate_average_age():
     total_age = 0
     count = 0
-    for user_age in stream_users_in_ages():
+    for user_age in stream_user_ages():
         total_age += user_age['age']
         count += 1
     print(total_age)
