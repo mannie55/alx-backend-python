@@ -17,18 +17,18 @@
 #     mycursor.close()
 #     mydb.close()
 
-import mysql.connector
+import pymysql
 
 def stream_users():
     # Connect to the database
-    mydb = mysql.connector.connect(
+    mydb = pymysql.connect(
         host="localhost",
         user="root",  # or the correct DB user
         password="5545851170",  # change to your real password
         database="ALX_prodev"  # replace with your DB name
     )
 
-    mycursor = mydb.cursor(dictionary=True)
+    mycursor = mydb.cursor(pymysql.cursors.DictCursor)
     mycursor.execute("SELECT * FROM user_data")
 
     # Loop through results and yield one row at a time
