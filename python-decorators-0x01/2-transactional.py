@@ -4,6 +4,7 @@ import functools
 """your code goes here"""
 
 def with_db_connection(func):
+    @functools.wraps(func)
     def wrapper(*args, **kwargs):
         conn = sqlite3.connect('my_database.db')
         print("conn", conn)
@@ -14,6 +15,7 @@ def with_db_connection(func):
     
 
 def transactional(func):
+    @functools.wraps(func)
     def wrapper(*args, **kwargs):
         try:
             conn = args[0]
@@ -21,6 +23,7 @@ def transactional(func):
             result = func(*args, **kwargs)
             conn.commit()
             print("result", result)
+            print("Transaction committed")
             return result
         except Exception as e:
             conn.rollback()
@@ -33,9 +36,6 @@ def transactional(func):
 def update_user_email(conn, user_id, new_email): 
     cursor = conn.cursor() 
     cursor.execute("UPDATE users SET email = ? WHERE id = ?", (new_email, user_id))
-    print(f"Rows affected: {cursor.rowcount}")
-    print("Email updated.")
-    return cursor.rowcount
 #### Update user's email with automatic transaction handling 
 
 update_user_email(user_id=1, new_email='Crawford_Cartwright@hotmail.com')
