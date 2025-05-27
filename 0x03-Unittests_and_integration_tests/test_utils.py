@@ -1,3 +1,7 @@
+#!/usr/bin/env python3
+"""Generic utilities for github org client.
+""" 
+
 import unittest
 from utils import access_nested_map
 from parameterized import expand
