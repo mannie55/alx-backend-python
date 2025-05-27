@@ -3,13 +3,14 @@
 """ 
 
 import unittest
+
 from utils import access_nested_map
-from parameterized import expand
+from parameterized import parameterized
 
 
 class TestAccessNestedMap(unittest.TestCase):
 
-    @expand([
+    @parameterized.expand([
         ({"a": 1}, ("a",), 1),
         ({"a": {"b": 2}}, ("a",), {"b": 2}),
         ({"a": {"b": 2}}, ("a", "b"), 2),
