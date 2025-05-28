@@ -68,7 +68,8 @@ class TestMemoize(unittest.TestCase):
     def test_memoize(self):
         """
         Test that the memoize decorator caches the result of a method.
-        The decorated method should only be called once, even if accessed multiple times.
+        The decorated method should only be called once, even if accessed
+        multiple times.
         """
         class TestClass:
             def a_method(self):
