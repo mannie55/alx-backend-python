@@ -63,7 +63,7 @@ class TestMemoize(unittest.TestCase):
         with patch.object(TestClass, 'a_method', return_value=42) as mock_method:
             obj = TestClass()
             #first call, should call a_method
-            result1 = obj.a_property\
+            result1 = obj.a_property
             #second call, should use cached value, not call a_method
             result2 = obj.a_property
 
