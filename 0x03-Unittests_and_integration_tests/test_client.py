@@ -82,7 +82,8 @@ class TestGithubOrgClient(unittest.TestCase):
     ])
     def test_has_license(self, mock_get_json, repo, license_key, expected):
         """
-        Test that GithubOrgClient.has_license returns True if the repo's license
+        Test that GithubOrgClient.has_license
+        returns True if the repo's license
         matches license_key, otherwise False.
         """
         result = GithubOrgClient.has_license(repo, license_key)
@@ -101,7 +102,8 @@ class TestGithubOrgClient(unittest.TestCase):
     def test_public_repos_with_license(self, mock_get_json):
         """
         Test that GithubOrgClient.public_repos returns the expected list
-        of repository names filtered by license="apache-2.0" based on the fixtures.
+        of repository names filtered by license="apache-2.0"
+        based on the fixtures.
         """
         mock_get_json.side_effect = [org_payload, repos_payload]
         client = GithubOrgClient("google")
