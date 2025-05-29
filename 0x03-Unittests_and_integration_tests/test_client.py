@@ -74,7 +74,7 @@ class TestGithubOrgClient(unittest.TestCase):
         ({"license": {"key": "my_license"}}, "my_license", True),
         ({"license": {"key": "other_license"}}, "my_license", False),
     ])
-    def test_has_license(self, repo, license_key, expected):
+    def test_has_license(self, mock_get_json, repo, license_key, expected):
         """
         Test that GithubOrgClient.has_license returns True if the repo's license
         matches license_key, otherwise False.
