@@ -2,7 +2,8 @@
 """Unit tests for the GithubOrgClient class in client.py.
 """
 
-from parameterized import parameterized, parameterized_class
+from parameterized import parameterized
+from parametetized import parameterized_class
 from unittest.mock import patch, PropertyMock
 import unittest
 import requests
