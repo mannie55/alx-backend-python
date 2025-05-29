@@ -39,3 +39,26 @@ class TestGithubOrgClient(unittest.TestCase):
             client = GithubOrgClient("testorg")
             result = client._public_repos_url
             self.assertEqual(result, payload["repos_url"])
+    
+    @patch('client.get_json')
+    def test_public_repos(self, mock_get_json):
+        """
+        Test that GithubOrgClient.public_repos returns the correct list of
+        public repositories based on the payload returned by get_json and
+        the URL returned by GithubOrgClient._public_repos_url.
+        """
+        test_payload = [
+            {"name": "repo1"},
+            {"name": "repo2"},
+            {"name": "repo3"},
+        ]
+        mock_get_json.return_value = test_payload
+        test_url = "https://api.github.com/orgs/testorg/repos"
+
+        with patch.object(GithubOrgClient, "_public_repos_url", new_callable=PropertyMock) as mock_url:
+            mock_url.return_value = test_url
+            client = GithubOrgClient("testorg")
+            repos = client.public_repos()
+            self.assertEqual(repos, ["repo1", "repo2", "repo3"])
+            mock_url.assert_called_once()
+            mock_get_json.assert_called_once_with(test_url)
