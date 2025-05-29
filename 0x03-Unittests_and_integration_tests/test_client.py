@@ -3,7 +3,7 @@
 """
 
 from parameterized import parameterized
-from parametetized import parameterized_class
+from parameterized import parameterized_class
 from unittest.mock import patch, PropertyMock
 import unittest
 import requests
@@ -88,11 +88,35 @@ class TestGithubOrgClient(unittest.TestCase):
         result = GithubOrgClient.has_license(repo, license_key)
         self.assertEqual(result, expected)
 
+    def test_public_repos(self, mock_get_json):
+        """
+        Test that GithubOrgClient.public_repos returns the expected list
+        of repository names based on the fixtures.
+        """
+        # Set side_effect to return org_payload first, then repos_payload
+        mock_get_json.side_effect = [org_payload, repos_payload]
+        client = GithubOrgClient("google")
+        self.assertEqual(client.public_repos(), expected_repos)
+
+    def test_public_repos_with_license(self, mock_get_json):
+        """
+        Test that GithubOrgClient.public_repos returns the expected list
+        of repository names filtered by license="apache-2.0" based on the fixtures.
+        """
+        mock_get_json.side_effect = [org_payload, repos_payload]
+        client = GithubOrgClient("google")
+        self.assertEqual(
+            client.public_repos(license="apache-2.0"),
+            apache2_repos
+        )
+
 
 @parameterized_class([
     {
         "org_payload": org_payload,
         "repos_payload": repos_payload,
+        "expected_repos": expected_repos,
+        "apache2_repos": apache2_repos,
     }
 ])
 class TestIntegrationGithubOrgClient(unittest.TestCase):
