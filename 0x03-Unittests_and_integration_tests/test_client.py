@@ -106,6 +106,11 @@ class TestGithubOrgClient(unittest.TestCase):
         mock_get_json.side_effect = [org_payload, repos_payload]
         client = GithubOrgClient("google")
         self.assertEqual(
+            client.public_repos(),
+            expected_repos
+        )
+
+        self.assertEqual(
             client.public_repos(license="apache-2.0"),
             apache2_repos
         )
