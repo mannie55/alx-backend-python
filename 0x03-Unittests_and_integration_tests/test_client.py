@@ -93,7 +93,7 @@ class TestGithubOrgClient(unittest.TestCase):
         "org_payload": org_payload,
         "repos_payload": repos_payload,
         "expected_repos": expected_repos,
-        "apache2_repos": apache2_repos,
+        "apache2_repos": apache2_repos
     }
 ])
 class TestIntegrationGithubOrgClient(unittest.TestCase):
