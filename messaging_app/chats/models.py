@@ -12,7 +12,6 @@ class User(AbstractUser):
     email = models.EmailField(unique=True)
     phone_number = models.CharField(max_length=15, blank=True, null=True)
     bio = models.TextField(blank=True, null=True)
-    profile_picture = models.ImageField(upload_to='profile_pictures/', blank=True, null=True)
     # password field is inherited from AbstractUser
 
     REQUIRED_FIELDS = ['email', 'first_name', 'last_name']

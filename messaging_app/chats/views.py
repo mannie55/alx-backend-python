@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from .serializers import UserSerializer, ConversationSerializer, MessageSerializer
-from rest_framework import viewsets, status
+from rest_framework import viewsets, status, filters
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from .models import User, Conversation, Message
@@ -12,6 +12,9 @@ class ConversationViewSet(viewsets.ModelViewSet):
     """
     queryset = Conversation.objects.all()
     serializer_class = ConversationSerializer
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter] 
+    search_fields = ['participants__username']
+    ordering_fields = ['created_at']
 
     def list(self, request, *args, **kwargs):
         """
@@ -34,6 +37,8 @@ class ConversationViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(conversation)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
+
+
 class MessageViewSet(viewsets.ModelViewSet):
     """
     ViewSet for managing messages.
@@ -41,6 +46,9 @@ class MessageViewSet(viewsets.ModelViewSet):
     """
     queryset = Message.objects.all()
     serializer_class = MessageSerializer
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ['message_body', 'sender__username']
+    ordering_fields = ['sent_at']
 
     def list(self, request, *args, **kwargs):
         """

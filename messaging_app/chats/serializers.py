@@ -8,7 +8,7 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = [
             'user_id', 'username', 'email', 'first_name', 'last_name',
-            'phone_number', 'bio', 'profile_picture', 'display_name'
+            'phone_number', 'bio', 'display_name'
         ]
 
 class MessageSerializer(serializers.ModelSerializer):
@@ -34,7 +34,7 @@ class MessageSerializer(serializers.ModelSerializer):
 
 class ConversationSerializer(serializers.ModelSerializer):
     participants = UserSerializer(many=True, read_only=True)
-    messages = MessageSerializer(many=True, read_only=True, source='messages')
+    messages = MessageSerializer(many=True, read_only=True)
 
     class Meta:
         model = Conversation
