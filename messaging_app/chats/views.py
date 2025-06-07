@@ -6,7 +6,7 @@ from rest_framework.decorators import action
 from .models import User, Conversation, Message
 from .permissions import IsParticipantOfConversation as IsParticipant
 from rest_framework.permissions import IsAuthenticated
-from .pagination import customPagination
+from .pagination import CustomPagination
 from .filters import MessageFilter
 
 class ConversationViewSet(viewsets.ModelViewSet):
@@ -59,10 +59,12 @@ class MessageViewSet(viewsets.ModelViewSet):
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
     search_fields = ['message_body', 'sender__username']
     ordering_fields = ['sent_at']
-    pagination_class = customPagination
+    pagination_class = CustomPagination
     filterset_class = MessageFilter
 
     def get_queryset(self):
+        if getattr(self, 'swagger_fake_view', False):
+            return Conversation.objects.none()
         # Only return messages where the request.user is a participant in the conversation
         return Message.objects.filter(conversation__participants=self.request.user)
 
