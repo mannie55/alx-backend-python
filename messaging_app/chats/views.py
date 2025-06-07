@@ -20,6 +20,9 @@ class ConversationViewSet(viewsets.ModelViewSet):
     ordering_fields = ['created_at']
 
     def get_queryset(self):
+         # Don't run DB logic when generating docs
+        if getattr(self, 'swagger_fake_view', False):
+            return Conversation.objects.none()
         """
         Override to filter conversations by the authenticated user.
         Only conversations where the user is a participant will be returned.

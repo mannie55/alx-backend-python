@@ -3,13 +3,24 @@ from .models import User, Conversation, Message
 
 class UserSerializer(serializers.ModelSerializer):
     display_name = serializers.CharField(source='get_full_name', read_only=True)
+    password = serializers.CharField(write_only=True)
 
     class Meta:
         model = User
         fields = [
             'user_id', 'username', 'email', 'first_name', 'last_name',
-            'phone_number', 'bio', 'display_name'
+            'phone_number', 'bio', 'display_name', 'password'
         ]
+
+    def create(self, validated_data):
+        """
+        Create a new user instance with the provided validated data.
+        The password is set using the set_password method to ensure hashing.
+        """
+        user = User(**validated_data)
+        user.set_password(validated_data['password'])
+        user.save()
+        return user
 
 class MessageSerializer(serializers.ModelSerializer):
     sender = UserSerializer(read_only=True)
