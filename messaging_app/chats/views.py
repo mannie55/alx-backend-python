@@ -64,7 +64,7 @@ class MessageViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         if getattr(self, 'swagger_fake_view', False):
-            return Conversation.objects.none()
+            return Message.objects.none()
         # Only return messages where the request.user is a participant in the conversation
         return Message.objects.filter(conversation__participants=self.request.user)
 
