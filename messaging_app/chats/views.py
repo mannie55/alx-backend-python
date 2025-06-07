@@ -4,8 +4,11 @@ from rest_framework import viewsets, status, filters
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from .models import User, Conversation, Message
+from .permissions import IsParticipant
+from rest_framework.permissions import IsAuthenticated
 
 class ConversationViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated, IsParticipant]
     """
     ViewSet for managing conversations.
     Provides CRUD operations for conversations.
@@ -16,13 +19,13 @@ class ConversationViewSet(viewsets.ModelViewSet):
     search_fields = ['participants__username']
     ordering_fields = ['created_at']
 
-    def list(self, request, *args, **kwargs):
+    def get_queryset(self):
         """
-        List all conversations with their participants and messages.
+        Override to filter conversations by the authenticated user.
+        Only conversations where the user is a participant will be returned.
         """
-        queryset = self.get_queryset()
-        serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)
+        user = self.request.user
+        return Conversation.objects.filter(participants=user)
 
     def create(self, request, *args, **kwargs):
         """
@@ -40,6 +43,7 @@ class ConversationViewSet(viewsets.ModelViewSet):
 
 
 class MessageViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated, IsParticipant]
     """
     ViewSet for managing messages.
     Provides CRUD operations for messages within conversations.
@@ -63,6 +67,18 @@ class MessageViewSet(viewsets.ModelViewSet):
         Send a message to an existing conversation.
         Expects 'conversation', 'sender', and 'message_body' in the request data.
         """
+
+        conversation_id = request.data.get('conversation')
+
+  
+        try:
+            conversation = Conversation.objects.get(id=conversation_id)
+        except Conversation.DoesNotExist:
+            return Response({'error': 'Conversation does not exist.'}, status=status.HTTP_404_NOT_FOUND)
+
+        if request.user not in conversation.participants.all():
+            return Response({'error': 'You are not a participant in this conversation.'}, status=status.HTTP_403_FORBIDDEN)
+
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
