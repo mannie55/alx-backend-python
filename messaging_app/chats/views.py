@@ -57,13 +57,10 @@ class MessageViewSet(viewsets.ModelViewSet):
     search_fields = ['message_body', 'sender__username']
     ordering_fields = ['sent_at']
 
-    def list(self, request, *args, **kwargs):
-        """
-        List all messages with their sender and conversation details.
-        """
-        queryset = self.get_queryset()
-        serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)
+
+    def get_queryset(self):
+        # Only return messages where the request.user is a participant in the conversation
+        return Message.objects.filter(conversation__participants=self.request.user)
 
     def create(self, request, *args, **kwargs):
         """
