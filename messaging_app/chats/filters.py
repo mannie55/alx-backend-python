@@ -5,6 +5,7 @@ import django_filters
 class MessageFilter(django_filters.FilterSet):
     """
     Filter for messages based on conversation ID and sender ID.
+
     """
     conversation_id = django_filters.NumberFilter(field_name='conversation__id', lookup_expr='exact')
     sender_id = django_filters.NumberFilter(field_name='sender__id', lookup_expr='exact')
