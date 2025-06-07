@@ -4,7 +4,7 @@ from rest_framework import viewsets, status, filters
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from .models import User, Conversation, Message
-from .permissions import IsParticipant
+from .permissions import IsParticipantOfConversation as IsParticipant
 from rest_framework.permissions import IsAuthenticated
 
 class ConversationViewSet(viewsets.ModelViewSet):
