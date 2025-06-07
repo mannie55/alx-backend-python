@@ -6,6 +6,8 @@ from rest_framework.decorators import action
 from .models import User, Conversation, Message
 from .permissions import IsParticipantOfConversation as IsParticipant
 from rest_framework.permissions import IsAuthenticated
+from .pagination import customPagination
+from .filters import MessageFilter
 
 class ConversationViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated, IsParticipant]
@@ -18,6 +20,7 @@ class ConversationViewSet(viewsets.ModelViewSet):
     filter_backends = [filters.SearchFilter, filters.OrderingFilter] 
     search_fields = ['participants__username']
     ordering_fields = ['created_at']
+  
 
     def get_queryset(self):
          # Don't run DB logic when generating docs
@@ -56,7 +59,8 @@ class MessageViewSet(viewsets.ModelViewSet):
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
     search_fields = ['message_body', 'sender__username']
     ordering_fields = ['sent_at']
-
+    pagination_class = customPagination
+    filterset_class = MessageFilter
 
     def get_queryset(self):
         # Only return messages where the request.user is a participant in the conversation
