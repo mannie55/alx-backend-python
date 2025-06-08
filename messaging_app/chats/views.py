@@ -36,15 +36,26 @@ class ConversationViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         """
         Create a new conversation with participants.
-        Expects a list of user IDs in 'participants'.
+        Expects a list of usernames in 'participants'.
         """
-        participants = request.data.get('participants', [])
-        if not participants or not isinstance(participants, list):
-            return Response({'error': 'Participants must be a list of user IDs.'}, status=status.HTTP_400_BAD_REQUEST)
-        conversation = Conversation.objects.create()
-        conversation.participants.set(participants)
-        serializer = self.get_serializer(conversation)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        # get data from request
+        participants_usernames = request.data.get('participants', [])
+
+        # fetch the username objects for the participants usernames
+        participants_usernames_object = User.objects.filter(username__in=participants_usernames)
+        if participants_usernames_object.count() != len(participants_usernames):
+            return Response(
+                {"error": "One or more usernames are invalid."}, status=400
+            )
+        # now we create the conversation object, assign participants using user objects(uuid) and save to db
+        conversation_object = Conversation.objects.create()
+
+        conversation_object.participants.set(participants_usernames_object)
+        conversation_object.save()
+        
+        serializer = self.get_serializer(conversation_object)
+        return Response(serializer.data, status=201)
+    
 
 
 
@@ -71,14 +82,15 @@ class MessageViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         """
         Send a message to an existing conversation.
-        Expects 'conversation', 'sender', and 'message_body' in the request data.
+        Expects 'conversation' and 'message_body' in the request data.
+        The sender is automatically set as the logged-in user.
         """
+    
 
         conversation_id = request.data.get('conversation')
 
-  
         try:
-            conversation = Conversation.objects.get(id=conversation_id)
+            conversation = Conversation.objects.get(conversation_id=conversation_id)
         except Conversation.DoesNotExist:
             return Response({'error': 'Conversation does not exist.'}, status=status.HTTP_404_NOT_FOUND)
 
@@ -87,5 +99,8 @@ class MessageViewSet(viewsets.ModelViewSet):
 
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        serializer.save()
+
+        # ✅ Inject the sender
+        serializer.save(sender=request.user)
+
         return Response(serializer.data, status=status.HTTP_201_CREATED)
