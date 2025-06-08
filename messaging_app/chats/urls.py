@@ -15,7 +15,7 @@ convo_router.register(r'messages', MessageViewSet, basename='conversation-messag
 urlpatterns = [
     path('', include(router.urls)),
     path('', include(convo_router.urls)),
-    path('api/auth/login', UserLoginView.as_view(), name='user_login'),
+    path('api/auth/login/', UserLoginView.as_view(), name='user_login'),
     path('api/auth/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('api/auth/register/', UserRegistrationView.as_view(), name='user_registration'),
     path('api/auth/profile/', UserProfileView.as_view(), name='user_profile'),

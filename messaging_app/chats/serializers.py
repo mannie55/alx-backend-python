@@ -1,6 +1,8 @@
 from rest_framework import serializers
-from .models import User, Conversation, Message
-
+from .models import Conversation, Message
+from django.contrib.auth import authenticate
+from django.contrib.auth import get_user_model
+User = get_user_model()
 class UserSerializer(serializers.ModelSerializer):
     display_name = serializers.CharField(source='get_full_name', read_only=True)
     password = serializers.CharField(write_only=True)
@@ -21,6 +23,18 @@ class UserSerializer(serializers.ModelSerializer):
         user.set_password(validated_data['password'])
         user.save()
         return user
+
+
+class LoginSerializer(serializers.Serializer):
+    username = serializers.CharField()
+    password = serializers.CharField(write_only=True)
+
+    def validate(self, data):
+        user = authenticate(username=data['username'], password=data['password'])
+        if user is None or not user.is_active:
+            raise serializers.ValidationError("Invalid credentials")
+        return {'user': user}
+    
 
 class MessageSerializer(serializers.ModelSerializer):
     sender = UserSerializer(read_only=True)

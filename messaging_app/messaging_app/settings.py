@@ -74,6 +74,11 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 20,
 }
 
+SIMPLE_JWT = {
+    "USER_ID_FIELD": "user_id",
+    "USER_ID_CLAIM": "user_id",
+}
+
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
